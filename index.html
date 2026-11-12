@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clasificador de motos y bicis</title>
+  <style>
+    body { font: 16px system-ui, sans-serif; max-width: 640px; margin: 3rem auto; padding: 0 1rem; }
+    button { font: inherit; padding: .6rem 1rem; cursor: pointer; }
+    #webcam-container { margin: 1.5rem 0; }
+    #webcam-container canvas, #webcam-container video { max-width: 100%; }
+    #label-container div { margin: .4rem 0; }
+    #status { min-height: 1.5em; }
+  </style>
+</head>
+<body>
+  <h1>Clasificador de motos y bicis</h1>
+  <p>Activa la cámara para clasificar la imagen con el modelo de Teachable Machine.</p>
+  <button id="start" type="button">Activar cámara</button>
+  <p id="status" role="status" aria-live="polite"></p>
+  <div id="webcam-container"></div>
+  <div id="label-container"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.7.4/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.4/dist/teachablemachine-image.min.js"></script>
+  <script>
+    const modelURL = new URL('./my_model/model.json', document.baseURI).href;
+    const metadataURL = new URL('./my_model/metadata.json', document.baseURI).href;
+    const button = document.getElementById('start');
+    const status = document.getElementById('status');
+    const webcamContainer = document.getElementById('webcam-container');
+    const labelContainer = document.getElementById('label-container');
+    const isIos = /iPhone|iPad/.test(navigator.userAgent);
+    let model, webcam;
+
+    button.addEventListener('click', async () => {
+      button.disabled = true;
+      status.textContent = 'Cargando el modelo…';
+      try {
+        if (!window.isSecureContext) {
+          throw new Error('La cámara necesita HTTPS o una dirección local. Abre esta página en http://localhost:8000 (o http://127.0.0.1:8000).');
+        }
+        if (!navigator.mediaDevices?.getUserMedia) {
+          throw new Error('Chrome no ofrece acceso a la cámara en esta página. Comprueba los permisos de cámara y abre la página directamente en localhost.');
+        }
+        if (!window.tmImage) throw new Error('No se pudo cargar la biblioteca de Teachable Machine. Comprueba la conexión a Internet.');
+        model = await tmImage.load(modelURL, metadataURL);
+        status.textContent = 'Solicitando acceso a la cámara…';
+        webcam = new tmImage.Webcam(224, 224, true);
+        await webcam.setup();
+        webcamContainer.replaceChildren(isIos ? webcam.webcam : webcam.canvas);
+        if (isIos) webcam.webcam.setAttribute('playsinline', '');
+        labelContainer.replaceChildren(...Array.from({ length: model.getTotalClasses() }, () => document.createElement('div')));
+        await webcam.play();
+        status.textContent = 'Cámara activa';
+        requestAnimationFrame(loop);
+      } catch (error) {
+        status.textContent = `No se pudo iniciar: ${error.message || error}`;
+        button.disabled = false;
+        console.error(error);
+      }
+    });
+
+    async function loop() {
+      webcam.update();
+      try {
+        const predictions = await model.predict(isIos ? webcam.webcam : webcam.canvas);
+        predictions.forEach((prediction, index) => {
+          labelContainer.children[index].textContent = `${prediction.className}: ${(prediction.probability * 100).toFixed(1)} %`;
+        });
+        requestAnimationFrame(loop);
+      } catch (error) {
+        status.textContent = `Error al clasificar: ${error.message || error}`;
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
