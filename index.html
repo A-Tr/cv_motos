@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Clasificador de motos y bicis</title>
+  <title>Clasificador de partidos políticos</title>
   <style>
     body { font: 16px system-ui, sans-serif; max-width: 640px; margin: 3rem auto; padding: 0 1rem; }
     button { font: inherit; padding: .6rem 1rem; cursor: pointer; }
@@ -14,11 +14,12 @@
   </style>
 </head>
 <body>
-  <h1>Clasificador de motos y bicis</h1>
-  <p>Activa la cámara para clasificar la imagen con el modelo de Teachable Machine.</p>
+  <h1>Clasificador de partidos políticos</h1>
+  <p>Activa la cámara para evaluar la imagen con el modelo de Teachable Machine. Categorías: PP, PSOE, Vox y Sumar.</p>
   <button id="start" type="button">Activar cámara</button>
   <p id="status" role="status" aria-live="polite"></p>
   <div id="webcam-container"></div>
+  <h2>Resultados</h2>
   <div id="label-container"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.7.4/dist/tf.min.js"></script>

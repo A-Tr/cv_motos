@@ -1,1 +1,1 @@
-{"tfjsVersion":"1.7.4","tmVersion":"2.4.19","packageVersion":"0.8.4-alpha2","packageName":"@teachablemachine/image","timeStamp":"2026-11-12T15:18:05.252Z","userMetadata":{},"modelName":"tm-my-image-model","labels":["Motos","Bici"],"imageSize":224}
+{"tfjsVersion":"1.7.4","tmVersion":"2.4.19","packageVersion":"0.8.4-alpha2","packageName":"@teachablemachine/image","timeStamp":"2026-11-17T16:55:30.767Z","userMetadata":{},"modelName":"tm-my-image-model","labels":["PP","PSOE","Vox","Sumar"],"imageSize":224}

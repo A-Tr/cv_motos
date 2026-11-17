@@ -1,4 +1,6 @@
-# Clasificador de motos y bicis
+# Clasificador de partidos políticos
+
+El modelo clasifica imágenes en cuatro categorías: PP, PSOE, Vox y Sumar.
 
 Sirve esta carpeta con un servidor local:
 
